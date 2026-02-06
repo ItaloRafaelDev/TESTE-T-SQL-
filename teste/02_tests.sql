@@ -1,4 +1,4 @@
-USE FilaDB;
+﻿USE FilaDB;
 GO
 
 /* Limpando */
@@ -57,3 +57,4 @@ PRINT '✅ TODOS OS TESTES PASSARAM.';
 SELECT * FROM dbo.FilaExecucao ORDER BY ID;
 SELECT * FROM dbo.FilaExecucaoLog ORDER BY LogID;
 GO
+
