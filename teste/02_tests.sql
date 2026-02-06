@@ -6,16 +6,20 @@ TRUNCATE TABLE dbo.FilaExecucaoLog;
 TRUNCATE TABLE dbo.FilaExecucao;
 
 DECLARE @id1 BIGINT, @id2 BIGINT, @id3 BIGINT;
+DECLARE @t TABLE (TarefaID BIGINT);
 
 -- 1) Adicionar 3 tarefas: OK, FALHA (max 2), FLAKY (max 3)
-EXEC dbo.AdicionarTarefa @NomeTarefa='OK',    @Payload=N'{}', @MaxTentativas=3;
-SET @id1 = SCOPE_IDENTITY();
+INSERT INTO @t EXEC dbo.AdicionarTarefa @NomeTarefa='OK',    @Payload=N'{}', @MaxTentativas=3;
+SELECT @id1 = TarefaID FROM @t;
+DELETE FROM @t;
 
-EXEC dbo.AdicionarTarefa @NomeTarefa='FALHA', @Payload=N'{}', @MaxTentativas=2;
-SET @id2 = SCOPE_IDENTITY();
+INSERT INTO @t EXEC dbo.AdicionarTarefa @NomeTarefa='FALHA', @Payload=N'{}', @MaxTentativas=2;
+SELECT @id2 = TarefaID FROM @t;
+DELETE FROM @t;
 
-EXEC dbo.AdicionarTarefa @NomeTarefa='FLAKY', @Payload=N'{}', @MaxTentativas=3;
-SET @id3 = SCOPE_IDENTITY();
+INSERT INTO @t EXEC dbo.AdicionarTarefa @NomeTarefa='FLAKY', @Payload=N'{}', @MaxTentativas=3;
+SELECT @id3 = TarefaID FROM @t;
+DELETE FROM @t;
 
 -- ASSERT: 3 pendentes
 IF (SELECT COUNT(*) FROM dbo.FilaExecucao WHERE Status='Pendente') <> 3
